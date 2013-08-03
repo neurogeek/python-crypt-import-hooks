@@ -5,6 +5,7 @@ SRCs_crypto=src/CryptImpHook.c src/Cipher.c
 OBJS_crypto=CryptImpHook.o Cipher.o
 PYTHON_CFLAGS=$(shell python-config --includes)
 PYTHON_LDFLAGS=$(shell python-config --libs)
+PYTHON_LIBDIR=-L$(shell python-config --prefix)/lib
 
 # All Target
 all: CryptImpHook.so CryptConv
@@ -31,7 +32,7 @@ CryptImpHook.so: $(OBJS_crypto)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
 	-@mkdir dist
-	$(CC) -O2 -fPIC -shared -Wl,-soname=CryptImpHook.so -o"dist/CryptImpHook.so" $(PYTHON_LDFLAGS) $(OBJS_crypto)
+	$(CC) -g -O2 -fPIC -shared -Wl,-install_name,CryptImpHook.so -o "dist/CryptImpHook.so" $(PYTHON_LIBDIR) $(PYTHON_LDFLAGS) $(OBJS_crypto)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -48,6 +49,5 @@ docs:
 test:
 	python runtests.py
 
-#.PHONY: all clean docs CryptImpHook.so test
 .PHONY: all clean docs test
 .SECONDARY:

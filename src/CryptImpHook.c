@@ -125,9 +125,10 @@ cih_read_module_code(PyObject *filename)
     int idx = 0;
     int ktal = strlen(qta);
     int btodec;
-    char temp[1];
+    char *temp;
 	char *module_code, *dec_module_code;
 
+    temp = (char*)malloc(sizeof(char));
 	char *chr_filename = PyString_AsString(filename);
 	//For now, we just read the filename and expect pure Python code.
 
@@ -158,6 +159,7 @@ cih_read_module_code(PyObject *filename)
 	}
 	fclose(fp);
 
+    free(temp);
 	return dec_module_code;
 }
 
