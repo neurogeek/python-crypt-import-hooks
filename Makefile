@@ -32,7 +32,7 @@ CryptImpHook.so: $(OBJS_crypto)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
 	-@mkdir dist
-	$(CC) -g -O2 -fPIC -shared -Wl,-install_name,CryptImpHook.so -o "dist/CryptImpHook.so" $(PYTHON_LIBDIR) $(PYTHON_LDFLAGS) $(OBJS_crypto)
+	$(CC) -g -O2 -fPIC -shared -o "dist/CryptImpHook.so" $(PYTHON_LIBDIR) $(PYTHON_LDFLAGS) $(OBJS_crypto)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
