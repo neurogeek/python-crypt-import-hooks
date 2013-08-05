@@ -1,0 +1,4 @@
+#!/bin/bash
+
+#Dummy configure for Travis-CI
+exit 0
