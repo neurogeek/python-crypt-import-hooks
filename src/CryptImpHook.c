@@ -168,7 +168,6 @@ cih_read_module_code(char *filename)
 	fclose(fp);
 
     free(temp);
-    free(tmp_name);
 	return dec_module_code;
 }
 
