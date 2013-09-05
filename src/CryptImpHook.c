@@ -131,7 +131,7 @@ cih_read_module_code(char *filename)
 	char *module_code, *dec_module_code;
 
     temp = (char*)malloc(sizeof(char));
-    tmp_name = (char *)malloc(sizeof(char) * (strlen(filename) + 4));
+    tmp_name = (char *)malloc(sizeof(char) * (strlen(filename) + strlen(IMPHOOK_SUFFIX)));
 
     sprintf(tmp_name, "%s%s", filename, IMPHOOK_SUFFIX);
     char *chr_filename = tmp_name;
@@ -168,6 +168,8 @@ cih_read_module_code(char *filename)
 	fclose(fp);
 
     free(temp);
+    free(tmp_name);
+
 	return dec_module_code;
 }
 
@@ -205,7 +207,6 @@ PyObject *self, *args;
 	{
 		hook->mod_file = PyString_FromString(filename);
 		free(filename);
-
 		return self;
 	}else{
 		free(filename);
@@ -343,5 +344,3 @@ void initCryptImpHook()
 	PyObject *m;
     m = Py_InitModule("CryptImpHook", methods);
 }
-
-
