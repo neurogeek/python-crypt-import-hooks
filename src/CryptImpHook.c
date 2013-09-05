@@ -128,35 +128,29 @@ cih_read_module_code(char *filename)
     int ktal = strlen(qta);
     int btodec;
     char *temp, *tmp_name;
-	char *module_code, *dec_module_code;
+	char *dec_module_code;
 
-    temp = (char*)malloc(sizeof(char));
-    tmp_name = (char *)malloc(sizeof(char) * (strlen(filename) + strlen(IMPHOOK_SUFFIX)));
-
+    temp = (char *)malloc(sizeof(char) + 1);
+    tmp_name = (char *)malloc(sizeof(char) * (strlen(filename) + strlen(IMPHOOK_SUFFIX)) + 2);
     sprintf(tmp_name, "%s%s", filename, IMPHOOK_SUFFIX);
-    char *chr_filename = tmp_name;
 
-	/* Instead of doing the stat twice, we could store a PyTuple instead of a PyString in hook->mod_file
-	 * At least we now the stat is good
-	 */
-
-	if ((err = stat(chr_filename, &buf)) != 0) {
+	if ((err = stat(tmp_name, &buf)) != 0) {
         printf("Error ocurred %d\n", errno);
         return NULL;
     }
 
-	dec_module_code = (char *)malloc(sizeof(char) * buf.st_size); //We grab the file size in bytes
+	dec_module_code = (char *)malloc(sizeof(char) * buf.st_size + 1); //We grab the file size in bytes
 	memset(dec_module_code, 0, sizeof(char) * buf.st_size);
 
-	if(module_code == NULL){
+	if(dec_module_code == NULL){
 		return NULL;
 	}
 
-	fp = fopen(chr_filename, "r");
+	fp = fopen(tmp_name, "r");
     while( (btodec = fgetc(fp)) != EOF )
     {
         sprintf(temp, "%c", XOR(btodec, qta[idx % ktal]));
-        strncat(dec_module_code, temp, sizeof(char));
+        strcat(dec_module_code, temp);
         idx++;
     }
 	err = ferror(fp);
@@ -165,6 +159,7 @@ cih_read_module_code(char *filename)
 	{
 		return NULL;
 	}
+
 	fclose(fp);
 
     free(temp);
