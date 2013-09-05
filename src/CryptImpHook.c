@@ -25,6 +25,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <errno.h>
 
 #include "Cipher.h"
 #include "CryptImpHook.h"
@@ -116,7 +117,8 @@ cih_get_path(const char *fullname)
  *  \return The decoded string, or NULL if an Error ocurred.
  */
 char *
-cih_read_module_code(PyObject *filename)
+cih_read_module_code(char *filename)
+//CryptImpHook_cih_read_module_code(PyObject *filename)
 {
 	FILE *fp;
 	ssize_t total;
@@ -129,14 +131,18 @@ cih_read_module_code(PyObject *filename)
 	char *module_code, *dec_module_code;
 
     temp = (char*)malloc(sizeof(char));
-	char *chr_filename = PyString_AsString(filename);
-	//For now, we just read the filename and expect pure Python code.
+	char *chr_filename = filename;
+    strcat(filename, IMPHOOK_SUFFIX);
 
 	/* Instead of doing the stat twice, we could store a PyTuple instead of a PyString in hook->mod_file
 	 * At least we now the stat is good
 	 */
 
-	stat(chr_filename, &buf);
+	if ((err = stat(chr_filename, &buf)) != 0) {
+        printf("Error ocurred %d\n", errno);
+        return NULL;
+    }
+
 	dec_module_code = (char *)malloc(sizeof(char) * buf.st_size); //We grab the file size in bytes
 	memset(dec_module_code, 0, sizeof(char) * buf.st_size);
 
@@ -192,16 +198,17 @@ PyObject *self, *args;
 	}
 
 	filename = cih_get_path(fullname);
+
 	if(filename != NULL)
 	{
 		hook->mod_file = PyString_FromString(filename);
 		free(filename);
+
 		return self;
 	}else{
 		free(filename);
 		return Py_None;
 	}
-
 }
 
 /*! \brief Function to load the Python module.
@@ -255,8 +262,13 @@ PyObject *self, *args;
         PyModule_AddObject(new_mod, "__builtins__", PyDict_GetItemString(sys_module_dict, "__builtin__"));
 	}
 
-	module_code = cih_read_module_code(hook->mod_file);
+	module_code = cih_read_module_code(fullname);
 	//Next, we grab the reference to the new module's __dict__
+
+    if(module_code == NULL) {
+        //We couldnt load the module. Raise ImportError
+        return PyExc_ImportError;
+    }
 	new_module_dict = PyModule_GetDict(new_mod);
 
 	/*
