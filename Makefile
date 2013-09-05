@@ -6,6 +6,7 @@ OBJS_crypto=CryptImpHook.o Cipher.o
 PYTHON_CFLAGS=$(shell python-config --includes)
 PYTHON_LDFLAGS=$(shell python-config --libs)
 PYTHON_LIBDIR=-L$(shell python-config --prefix)/lib
+CFLAGS=-Wall
 
 # All Target
 all: CryptImpHook.so CryptConv
@@ -32,7 +33,7 @@ CryptImpHook.so: $(OBJS_crypto)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
 	-@mkdir dist
-	$(CC) -g -O2 -fPIC -shared -o "dist/CryptImpHook.so" $(PYTHON_LIBDIR) $(PYTHON_LDFLAGS) $(OBJS_crypto)
+	$(CC) $(CFLAGS) -ggdb -g -O2 -fPIC -shared -o "dist/CryptImpHook.so" $(PYTHON_LIBDIR) $(PYTHON_LDFLAGS) $(OBJS_crypto)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
