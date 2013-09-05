@@ -2,3 +2,4 @@ docs/*
 dist
 *.o
 *pye
+valgrind-python.supp
