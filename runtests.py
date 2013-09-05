@@ -14,6 +14,9 @@ CryptConv = "dist/CryptConv"
 p = Popen(" ".join([CryptConv, "test_script.py", "EncModule.pye"]), shell=True)
 p.wait()
 
+p = Popen(" ".join([CryptConv, "test_script_b.py", "EncModuleB.pye"]), shell=True)
+p.wait()
+
 #Now, for the Actual Test
 print("Starting Test. Importing CryptImpHook", end="\n")
 from CryptImpHook import CryptImpHook
@@ -25,3 +28,6 @@ print("Import class C from EncModule", end="\n")
 #Now lets import our Module
 import EncModule
 EncModule.C(1, 2, 3)
+
+import EncModuleB
+EncModuleB.some_function_b(4, 5, 6)
