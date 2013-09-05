@@ -127,12 +127,14 @@ cih_read_module_code(char *filename)
     int idx = 0;
     int ktal = strlen(qta);
     int btodec;
-    char *temp;
+    char *temp, *tmp_name;
 	char *module_code, *dec_module_code;
 
     temp = (char*)malloc(sizeof(char));
-	char *chr_filename = filename;
-    strcat(filename, IMPHOOK_SUFFIX);
+    tmp_name = (char *)malloc(sizeof(char) * (strlen(filename) + 4));
+
+    sprintf(tmp_name, "%s%s", filename, IMPHOOK_SUFFIX);
+    char *chr_filename = tmp_name;
 
 	/* Instead of doing the stat twice, we could store a PyTuple instead of a PyString in hook->mod_file
 	 * At least we now the stat is good
@@ -166,6 +168,7 @@ cih_read_module_code(char *filename)
 	fclose(fp);
 
     free(temp);
+    free(tmp_name);
 	return dec_module_code;
 }
 
